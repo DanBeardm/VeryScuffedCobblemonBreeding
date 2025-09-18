@@ -18,10 +18,14 @@ public class VeryScuffedCobblemonBreedingConfig {
             .disableHtmlEscaping()
             .setPrettyPrinting()
             .create();
-    public static int COMMAND_POKEBREED_PERMISSION_LEVEL = 2;      // Default for MC is 2.
-    public static int VIP_COMMAND_POKEBREED_PERMISSION_LEVEL = 3;  // VIP permission level.
-    public static int COOLDOWN_IN_MINUTES = 5;      // Default: 5 minutes cooldown.
-    public static int VIP_COOLDOWN_IN_MINUTES = 3;  // VIP breeding cooldown, default: 3.
+    public static int COMMAND_POKEBREED_PERMISSION_LEVEL = 0;      // Default for MC is 2.
+    public static int VIP_COMMAND_POKEBREED_PERMISSION_LEVEL = 0;  // VIP permission level.
+    public static int COOLDOWN_IN_MINUTES = 22;      // Default: 5 minutes cooldown.
+    public static int VIP_COOLDOWN_IN_MINUTES = 5;  // VIP breeding cooldown, default: 3.
+    public static int MASTER_COMMAND_POKEBREED_PERMISSION_LEVEL = 0;     // or whatever level
+    public static int LEGEND_COMMAND_POKEBREED_PERMISSION_LEVEL = 0;     // if you want Legend above that
+    public static int MASTER_COOLDOWN_IN_MINUTES = 17;                  // example
+    public static int LEGEND_COOLDOWN_IN_MINUTES = 14;                   // example
     public static int DITTO_BREEDING = 1;  // Whether breeding with a ditto is allowed or not, default: 1 (true).
     public static int HIDDEN_ABILITY = 1;  // Whether passing down hidden abilities is enabled: 1 (true).
 
@@ -47,13 +51,17 @@ public class VeryScuffedCobblemonBreedingConfig {
 
             JsonObject permLevels = obj.get("permissionlevels").getAsJsonObject();
             HashMap<String, Integer> permissionMap = GSON.fromJson(permLevels, type);
-            COMMAND_POKEBREED_PERMISSION_LEVEL = permissionMap.getOrDefault("command.pokebreed", 2);
-            VIP_COMMAND_POKEBREED_PERMISSION_LEVEL = permissionMap.getOrDefault("command.vippokebreed", 3);
+            COMMAND_POKEBREED_PERMISSION_LEVEL = permissionMap.getOrDefault("command.pokebreed", 0);
+            VIP_COMMAND_POKEBREED_PERMISSION_LEVEL = permissionMap.getOrDefault("command.vippokebreed", 0);
+            MASTER_COMMAND_POKEBREED_PERMISSION_LEVEL = permissionMap.getOrDefault("command.masterpokebreed", 0);
+            LEGEND_COMMAND_POKEBREED_PERMISSION_LEVEL = permissionMap.getOrDefault("command.legendpokebreed", 0);
 
             JsonObject cooldowns = obj.get("cooldowns").getAsJsonObject();
             HashMap<String, Integer> cooldownsMap = GSON.fromJson(cooldowns, type);
-            COOLDOWN_IN_MINUTES = cooldownsMap.getOrDefault("command.pokebreed.cooldown", 5);
-            VIP_COOLDOWN_IN_MINUTES = cooldownsMap.getOrDefault("command.pokebreed.vipcooldown", 3);
+            COOLDOWN_IN_MINUTES = cooldownsMap.getOrDefault("command.pokebreed.cooldown", 22);
+            VIP_COOLDOWN_IN_MINUTES = cooldownsMap.getOrDefault("command.pokebreed.vipcooldown", 5);
+            MASTER_COOLDOWN_IN_MINUTES = cooldownsMap.getOrDefault("command.pokebreed.mastercooldown", 17);
+            LEGEND_COOLDOWN_IN_MINUTES = cooldownsMap.getOrDefault("command.pokebreed.legendcooldown", 14);
 
             JsonObject otherFeatures = obj.get("otherFeatures").getAsJsonObject();
             HashMap<String, Integer> otherFeaturesMap = GSON.fromJson(otherFeatures, type);
@@ -77,6 +85,10 @@ public class VeryScuffedCobblemonBreedingConfig {
                             .value(COMMAND_POKEBREED_PERMISSION_LEVEL)
                             .name("command.vippokebreed")
                             .value(VIP_COMMAND_POKEBREED_PERMISSION_LEVEL)
+                            .name("command.masterpokebreed")
+                            .value(MASTER_COMMAND_POKEBREED_PERMISSION_LEVEL)
+                            .name("command.legendpokebreed")
+                            .value(LEGEND_COMMAND_POKEBREED_PERMISSION_LEVEL)
                         .endObject()
                     .name("cooldowns")
                         .beginObject()
@@ -84,6 +96,10 @@ public class VeryScuffedCobblemonBreedingConfig {
                             .value(COOLDOWN_IN_MINUTES)
                             .name("command.pokebreed.vipcooldown")
                             .value(VIP_COOLDOWN_IN_MINUTES)
+                            .name("command.pokebreed.mastercooldown")
+                            .value(MASTER_COOLDOWN_IN_MINUTES)
+                            .name("command.pokebreed.legendcooldown")
+                            .value(LEGEND_COOLDOWN_IN_MINUTES)
                         .endObject()
                     .name("otherFeatures")
                         .beginObject()

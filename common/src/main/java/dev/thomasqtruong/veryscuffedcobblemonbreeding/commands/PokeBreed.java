@@ -89,9 +89,14 @@ public class PokeBreed {
   private int execute(CommandContext<CommandSourceStack> ctx) {
     if (ctx.getSource().getPlayer() != null) {
       ServerPlayer player = ctx.getSource().getPlayer();
-      // Checks whether player has VIP permissions.
-      boolean isVIP = VeryScuffedCobblemonBreedingPermissions.checkPermission(ctx.getSource(),
-              VeryScuffedCobblemonBreeding.permissions.VIP_POKEBREED_PERMISSION);
+      // Checks which tier the player has.
+        boolean isLegend = VeryScuffedCobblemonBreedingPermissions.checkPermission(ctx.getSource(),
+        VeryScuffedCobblemonBreeding.permissions.LEGEND_POKEBREED_PERMISSION);
+        boolean isMaster = VeryScuffedCobblemonBreedingPermissions.checkPermission(ctx.getSource(),
+        VeryScuffedCobblemonBreeding.permissions.MASTER_POKEBREED_PERMISSION);
+        boolean isVIP = VeryScuffedCobblemonBreedingPermissions.checkPermission(ctx.getSource(),
+        VeryScuffedCobblemonBreeding.permissions.VIP_POKEBREED_PERMISSION);
+
 
       // Breed session already exists for player.
       if (breedSessions.containsKey(player.getUUID())) {
@@ -105,19 +110,22 @@ public class PokeBreed {
           // Pokemon was bred before; check if it never got off cooldown.
           long timeSince = System.currentTimeMillis() - breedSession.timeBred;
 
-          // User is a VIP.
-          if (isVIP) {
-            // Cooldown was supposed to be over!
-            if (timeSince > 1000L * 60
-                    * VeryScuffedCobblemonBreedingConfig.VIP_COOLDOWN_IN_MINUTES) {
-              breedSessions.remove(player.getUUID());
-            }
+          if (isLegend) {
+              if (timeSince > 1000L * 60 * VeryScuffedCobblemonBreedingConfig.LEGEND_COOLDOWN_IN_MINUTES) {
+                  breedSessions.remove(player.getUUID());
+              }
+          } else if (isMaster) {
+              if (timeSince > 1000L * 60 * VeryScuffedCobblemonBreedingConfig.MASTER_COOLDOWN_IN_MINUTES) {
+                  breedSessions.remove(player.getUUID());
+              }
+          } else if (isVIP) {
+              if (timeSince > 1000L * 60 * VeryScuffedCobblemonBreedingConfig.VIP_COOLDOWN_IN_MINUTES) {
+                  breedSessions.remove(player.getUUID());
+              }
           } else {
-            // User is not a VIP.
-            // Cooldown was supposed to be over!
-            if (timeSince > 1000L * 60 * VeryScuffedCobblemonBreedingConfig.COOLDOWN_IN_MINUTES) {
-              breedSessions.remove(player.getUUID());
-            }
+              if (timeSince > 1000L * 60 * VeryScuffedCobblemonBreedingConfig.COOLDOWN_IN_MINUTES) {
+                  breedSessions.remove(player.getUUID());
+              }
           }
         }
       }
@@ -128,13 +136,16 @@ public class PokeBreed {
         BreedSession breedSession = breedSessions.get(player.getUUID());
         long cooldownDuration = (System.currentTimeMillis() - breedSession.timeBred) / 1000;
         // Total cooldown time - time since = time left.
-        if (isVIP) {
-          cooldownDuration = (VeryScuffedCobblemonBreedingConfig.VIP_COOLDOWN_IN_MINUTES
-                  * 60L) - cooldownDuration;
+        if (isLegend) {
+            cooldownDuration = (VeryScuffedCobblemonBreedingConfig.LEGEND_COOLDOWN_IN_MINUTES * 60L) - cooldownDuration;
+        } else if (isMaster) {
+            cooldownDuration = (VeryScuffedCobblemonBreedingConfig.MASTER_COOLDOWN_IN_MINUTES * 60L) - cooldownDuration;
+        } else if (isVIP) {
+            cooldownDuration = (VeryScuffedCobblemonBreedingConfig.VIP_COOLDOWN_IN_MINUTES * 60L) - cooldownDuration;
         } else {
-          cooldownDuration = (VeryScuffedCobblemonBreedingConfig.COOLDOWN_IN_MINUTES
-                  * 60L) - cooldownDuration;
+            cooldownDuration = (VeryScuffedCobblemonBreedingConfig.COOLDOWN_IN_MINUTES * 60L) - cooldownDuration;
         }
+
 
         Component toSend = Component.literal("Breed cooldown: " + cooldownDuration + " seconds.")
                 .withStyle(ChatFormatting.RED);
@@ -266,22 +277,36 @@ public class PokeBreed {
         Component toSend = Component.literal("Breed complete!").withStyle(ChatFormatting.GREEN);
         breeder.sendSystemMessage(toSend);
         // Player has VIP status.
-        if (isVIP) {
-          scheduler.schedule(() -> {
-            breedSessions.remove(breederUUID);
-            Component noCooldownMessage = Component.literal("Breeding is now available.")
-                    .withStyle(ChatFormatting.GREEN);
-            breeder.sendSystemMessage(noCooldownMessage);
-          }, VeryScuffedCobblemonBreedingConfig.VIP_COOLDOWN_IN_MINUTES, TimeUnit.MINUTES);
+        if (isLegend) {
+            scheduler.schedule(() -> {
+                breedSessions.remove(breederUUID);
+                Component noCooldownMessage = Component.literal("Breeding is now available.")
+                        .withStyle(ChatFormatting.GREEN);
+                breeder.sendSystemMessage(noCooldownMessage);
+            }, VeryScuffedCobblemonBreedingConfig.LEGEND_COOLDOWN_IN_MINUTES, TimeUnit.MINUTES);
+        } else if (isMaster) {
+            scheduler.schedule(() -> {
+                breedSessions.remove(breederUUID);
+                Component noCooldownMessage = Component.literal("Breeding is now available.")
+                        .withStyle(ChatFormatting.GREEN);
+                breeder.sendSystemMessage(noCooldownMessage);
+            }, VeryScuffedCobblemonBreedingConfig.MASTER_COOLDOWN_IN_MINUTES, TimeUnit.MINUTES);
+        } else if (isVIP) {
+            scheduler.schedule(() -> {
+                breedSessions.remove(breederUUID);
+                Component noCooldownMessage = Component.literal("Breeding is now available.")
+                        .withStyle(ChatFormatting.GREEN);
+                breeder.sendSystemMessage(noCooldownMessage);
+            }, VeryScuffedCobblemonBreedingConfig.VIP_COOLDOWN_IN_MINUTES, TimeUnit.MINUTES);
         } else {
-          // Player does not have VIP status.
-          scheduler.schedule(() -> {
-            breedSessions.remove(breederUUID);
-            Component noCooldownMessage = Component.literal("Breeding is now available.")
-                    .withStyle(ChatFormatting.GREEN);
-            breeder.sendSystemMessage(noCooldownMessage);
-          }, VeryScuffedCobblemonBreedingConfig.COOLDOWN_IN_MINUTES, TimeUnit.MINUTES);
+            scheduler.schedule(() -> {
+                breedSessions.remove(breederUUID);
+                Component noCooldownMessage = Component.literal("Breeding is now available.")
+                        .withStyle(ChatFormatting.GREEN);
+                breeder.sendSystemMessage(noCooldownMessage);
+            }, VeryScuffedCobblemonBreedingConfig.COOLDOWN_IN_MINUTES, TimeUnit.MINUTES);
         }
+
         timeBred = System.currentTimeMillis();
       } else {
         cancel("One of the Cobblemons does not exist!");

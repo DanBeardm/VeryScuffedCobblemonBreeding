@@ -11,9 +11,29 @@ public class VeryScuffedCobblemonBreedingPermissions {
     public final CobblemonPermission POKEBREED_PERMISSION;
     public final CobblemonPermission VIP_POKEBREED_PERMISSION;
 
+    // NEW: Master & Legend tiers
+    public final CobblemonPermission MASTER_POKEBREED_PERMISSION;
+    public final CobblemonPermission LEGEND_POKEBREED_PERMISSION;
+
     public VeryScuffedCobblemonBreedingPermissions() {
-        this.POKEBREED_PERMISSION = new CobblemonPermission("veryscuffedcobblemonbreeding.command.pokebreed", toPermLevel(VeryScuffedCobblemonBreedingConfig.COMMAND_POKEBREED_PERMISSION_LEVEL));
-        this.VIP_POKEBREED_PERMISSION = new CobblemonPermission("veryscuffedcobblemonbreeding.command.vippokebreed", toPermLevel(VeryScuffedCobblemonBreedingConfig.VIP_COMMAND_POKEBREED_PERMISSION_LEVEL));
+        this.POKEBREED_PERMISSION = new CobblemonPermission(
+                "veryscuffedcobblemonbreeding.command.pokebreed",
+                toPermLevel(VeryScuffedCobblemonBreedingConfig.COMMAND_POKEBREED_PERMISSION_LEVEL)
+        );
+        this.VIP_POKEBREED_PERMISSION = new CobblemonPermission(
+                "veryscuffedcobblemonbreeding.command.vippokebreed",
+                toPermLevel(VeryScuffedCobblemonBreedingConfig.VIP_COMMAND_POKEBREED_PERMISSION_LEVEL)
+        );
+
+        // NEW: construct Master & Legend with your new config levels
+        this.MASTER_POKEBREED_PERMISSION = new CobblemonPermission(
+                "veryscuffedcobblemonbreeding.command.masterpokebreed",
+                toPermLevel(VeryScuffedCobblemonBreedingConfig.MASTER_COMMAND_POKEBREED_PERMISSION_LEVEL)
+        );
+        this.LEGEND_POKEBREED_PERMISSION = new CobblemonPermission(
+                "veryscuffedcobblemonbreeding.command.legendpokebreed",
+                toPermLevel(VeryScuffedCobblemonBreedingConfig.LEGEND_COMMAND_POKEBREED_PERMISSION_LEVEL)
+        );
     }
 
     public PermissionLevel toPermLevel(int permLevel) {

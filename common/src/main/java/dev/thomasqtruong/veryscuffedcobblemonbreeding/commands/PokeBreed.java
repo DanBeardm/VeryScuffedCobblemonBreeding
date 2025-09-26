@@ -157,6 +157,8 @@ public class PokeBreed {
       // Create and start breeding session.
       BreedSession breedSession = new BreedSession(player);
       breedSession.isVIP = isVIP;
+      breedSession.isLegend = isLegend;
+      breedSession.isMaster = isMaster;
       breedSessions.put(player.getUUID(), breedSession);
       breedSession.start();
     }
@@ -173,6 +175,8 @@ public class PokeBreed {
     public ServerPlayer breeder;
     UUID breederUUID;
     boolean isVIP = false;
+    boolean isLegend = false;
+    boolean isMaster = false;
     // Breeding information.
     public int maxPCSize = 30;  // 30 by default.
     public int pageChangeSetting = 1;  // Amount of pages to change for PC.
